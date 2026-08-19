@@ -184,7 +184,7 @@ export const NewEventModal: React.FC<NewEventModalProps> = ({
               />
             </View>
 
-            {/* REPETIÇÃO (Novo) */}
+            {/* REPETIÇÃO */}
             <View style={styles.formGroup}>
               <Text style={[styles.fieldLabel, { color: theme.textSecondary }]}>REPETIÇÃO</Text>
               <View style={styles.recurrenceRow}>

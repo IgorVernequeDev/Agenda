@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { MONTH_NAMES_SHORT, WEEK_DAYS_SHORT_PT } from '../utils/dateUtils';
-import { EventItem } from '../types';
+import { EventItem, isEventOnDate } from '../types';
 
 interface CalendarYearViewProps {
   year: number;
@@ -30,21 +30,18 @@ export const CalendarYearView: React.FC<CalendarYearViewProps> = ({
 }) => {
   const months = Array.from({ length: 12 }, (_, i) => i);
 
-  // Group events by YYYY-MM
-  const eventsByMonth = React.useMemo(() => {
-    const map: Record<string, number> = {};
-    events.forEach((ev) => {
-      const ym = ev.date.substring(0, 7);
-      map[ym] = (map[ym] || 0) + 1;
-    });
-    return map;
-  }, [events]);
-
   const renderMiniMonth = (monthIndex: number) => {
     const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
     const firstDayOfWeek = new Date(year, monthIndex, 1).getDay(); // 0 is Sunday
-    const monthKey = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
-    const monthEventsCount = eventsByMonth[monthKey] || 0;
+
+    // Count events in this month
+    let monthEventsCount = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      if (events.some((ev) => isEventOnDate(ev, dateStr))) {
+        monthEventsCount++;
+      }
+    }
 
     const cells: (number | null)[] = [];
     for (let i = 0; i < firstDayOfWeek; i++) {
